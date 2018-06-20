@@ -8,7 +8,7 @@ class Renderer
 {
 private:
 	static GLuint vao;
-	static GLuint ebo, vbo;		// PROBLEM: Does vbo only need to exist during initialization?
+	static GLuint ebo, vbo;
 	static int idTexture;
 	static int idShader;
 	static glm::vec2 size;

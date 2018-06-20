@@ -13,16 +13,17 @@ void Renderer::init()
 {
 	float vertexes[] =
 	{
-		1.0f, 1.0f,	1.0f, 1.0f,
-		1.0f, -1.0f,	1.0f, 0.0f,
-		-1.0f, -1.0f,	0.0f, 0.0f,
-		-1.0f, 1.0f,	0.0f, 1.0f
+		1.0f, 1.0f, //1.0f, 1.0f,
+		1.0f, 0.0f, //1.0f, 0.0f,
+		0.0f, 0.0f, //0.0f, 0.0f,
+		0.0f, 1.0f, //0.0f, 1.0f
 	};
 	unsigned int indexes[] =
 	{
 		0, 1, 3,
 		1, 2, 3
 	};
+
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ebo);
@@ -35,13 +36,12 @@ void Renderer::init()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void *)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void *)0);
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void *)(2 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	idShader = ResourceManager::loadShader("shaders/shader.vert", "shaders/shader.frag");
 
-	glm::mat4 proj;
+	glm::mat4 proj = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
 	Shader & s = ResourceManager::getShader(idShader);
 	s.use();
 	s.setmat4f("proj", proj);
@@ -60,14 +60,23 @@ void Renderer::setSize(const glm::vec2 & s)
 void Renderer::render(const glm::vec2 & pos)
 {
 	glm::mat4 model;
-	glm::translate(model, glm::vec3(pos, 0.0f));
-	glm::scale(model, glm::vec3(size, 0.0f));
+	// translate() and scale() returns the new matrix instead of modifying the old one,
+	// so the return value should be assigned to model
+	model = glm::translate(model, glm::vec3(pos, 0.0f));
+	model = glm::scale(model, glm::vec3(size, 0.0f));
 
 	Shader & s = ResourceManager::getShader(idShader);
 	s.use();
 	s.setmat4f("model", model);
 
-	ResourceManager::getTexture(idTexture).use();
+	// check if the current texture is the same as the last one,
+	// only bound texture if different, in order to speed up
+	static int idTextureLast = -1;
+	if (idTexture != idTextureLast)
+	{
+		ResourceManager::getTexture(idTexture).use();
+		idTextureLast = idTexture;
+	}
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

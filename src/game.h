@@ -3,19 +3,26 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include "world.h"
 
 class Game
 {
 private:
-	GLFWwindow * window;
 	void init();
 	void loop();
 	void clear();
-	int shaderId;
-	int textureId;
+
+	void processInput();
+	void update();
+
+	static GLFWwindow * window;
+
+	World world;
 public:
 	Game();
 	void run();
+
+	static bool isKeyDown(int key) { return glfwGetKey(window, key) != GLFW_RELEASE; }
 };
 
 #endif

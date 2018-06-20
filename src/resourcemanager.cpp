@@ -2,6 +2,9 @@
 #include <iostream>
 #include <fstream>
 using std::ifstream;
+using std::cout;
+using std::endl;
+
 #define STB_IMAGE_IMPLEMENTATION	// Very important
 #include <stb_image.h>
 
@@ -23,7 +26,9 @@ int ResourceManager::loadShader(const char * vFile, const char * fFile)
 int ResourceManager::loadTexture(const char * file, bool alpha)
 {
 	int width, height;
-	unsigned char * image = stbi_load(file, &width, &height, nullptr, 0);		// Can nrChannels be nullptr?
+	unsigned char * image = stbi_load(file, &width, &height, nullptr, 0);		// PROBLEM: Can nrChannels be nullptr?
+	if (image == nullptr)
+		cout << "ERROR: Failed to load texture image, filename: " << file << endl;
 	Texture texture;
 	texture.load(image, width, height, alpha);
 	textures.push_back(texture);
@@ -56,11 +61,12 @@ const char * ResourceManager::read(const char * file)
 	fin.open(file);
 	if (!fin.is_open())
 	{
-		std::cout << "ERROR: Failed to open file!\n";
+		std::cout << "ERROR: Failed to open file, filename:\n" << file << std::endl;
 		return nullptr;
 	}
 	fin.seekg(0, std::ios_base::end);
-	size = fin.tellg();		// Maybe not real size (I'm not sure)
+	size = (int)fin.tellg();		// Maybe not real size (I'm not sure).
+	// And the file size must be lesser than 2147483647 bytes (well, no files can be such big right?)
 	char * content = new char[size + 1]{ '\0' };
 	fin.seekg(0, std::ios_base::beg);
 	fin.read(content, size);

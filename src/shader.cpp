@@ -1,6 +1,8 @@
 #include "shader.h"
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
+using std::cout;
+using std::endl;
 
 Shader::Shader()
 {
@@ -44,18 +46,19 @@ void Shader::loadProgram(GLuint vShader, GLuint fShader)
 	glDeleteShader(fShader);
 }
 
+#define _ifElseByIsShader(s1, s2) if (type != PROGRAM) (s1); else (s2)
+
 void Shader::checkErrors(GLuint id, GLenum type) const
 {
 	bool status = _getStatus(id, type);
 	if (!status)
 	{
 		GLchar * log = _getLog(id, type);
-		std::cout << "ERROR: Shader compilation failed, type: " << typeName(type) << ", info log:\n" << log << std::endl;
+		_ifElseByIsShader(cout << "ERROR: Shader compilation failed, ", cout << "ERROR: Program linking failed, ");
+		cout << "type: " << typeName(type) << ", info log:\n" << log << endl;
 		delete[] log;
 	}
 }
-
-#define _ifElseByIsShader(s1, s2) if (type != PROGRAM) (s1); else (s2)
 
 bool Shader::_getStatus(GLuint id, GLenum type) const
 {
