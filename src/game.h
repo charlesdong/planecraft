@@ -14,6 +14,7 @@ private:
 
 	void processInput();
 	void update();
+	void render();
 
 	static GLFWwindow * window;
 

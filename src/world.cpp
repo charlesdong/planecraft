@@ -14,6 +14,7 @@ void World::update()
 	static float timeLast = 0.0f;
 	float timeCur = (float)glfwGetTime();
 	float dt = timeCur - timeLast;
+	timeLast = timeCur;
 
 	if (Game::isKeyDown(GLFW_KEY_A))
 		posView.x -= VELOCITY_X * dt;

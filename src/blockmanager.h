@@ -8,7 +8,7 @@
 class BlockManager
 {
 private:
-	static const int WIDTH = 10;
+	static const int WIDTH = 40;
 	static const int HEIGHT = 4;
 	TypeBlock blocks[HEIGHT][WIDTH];
 	BlockRenderer br;

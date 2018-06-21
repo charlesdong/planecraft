@@ -48,12 +48,9 @@ void Game::init()
 
 void Game::loop()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-
 	processInput();
-
-	Renderer::setSize(SIZE_BLOCK);
-	world.render();
+	update();
+	render();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -74,4 +71,12 @@ void Game::processInput()
 void Game::update()
 {
 	world.update();
+}
+
+void Game::render()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	Renderer::setSize(SIZE_BLOCK);
+	world.render();
 }
